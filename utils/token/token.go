@@ -33,12 +33,10 @@ func keyFunc(_ *jwt.Token) (interface{}, error) {
 
 func ParseJWT(tokenString string) (*MyClaims, error) {
 	var claims MyClaims
-	// 解析token
 	token, err := jwt.ParseWithClaims(tokenString, &claims, keyFunc)
 	if err != nil {
 		return nil, fmt.Errorf("parsing token: %w", err)
 	}
-	// 校验token
 	if !token.Valid {
 		return nil, errors.New("invalid token")
 	}

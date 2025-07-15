@@ -64,3 +64,12 @@ func (u *User) BeforeSave() error {
 	return nil
 
 }
+
+func GetUserByID(id int64) (*User, error) {
+	var user User
+	if err := DB.First(&user, id).Error; err != nil {
+		return nil, err
+	}
+	log.Println(user)
+	return &user, nil
+}

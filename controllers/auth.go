@@ -4,6 +4,8 @@ import (
 	"jwt-gin/models"
 	"net/http"
 
+	"jwt-gin/utils/ret"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,7 +17,7 @@ type LoginInput struct {
 func Login(c *gin.Context) {
 	var input LoginInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, ret.RetFailMsg(err.Error()))
 		return
 	}
 
@@ -26,11 +28,11 @@ func Login(c *gin.Context) {
 
 	token, err := models.LoginCheck(u.Username, u.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
+		c.JSON(http.StatusBadRequest, ret.RetFailMsg("username or password is incorrect."))
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, ret.RetSuccessData(token))
 }
 
 type RegisterInput struct {
@@ -41,7 +43,7 @@ type RegisterInput struct {
 func Register(c *gin.Context) {
 	var input RegisterInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, ret.RetFailMsg(err.Error()))
 		return
 	}
 
@@ -50,9 +52,9 @@ func Register(c *gin.Context) {
 	u.Password = input.Password
 	_, err := u.SaveUser()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, ret.RetFailMsg(err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "registration success"})
+	c.JSON(http.StatusOK, ret.RetSuccess())
 }
